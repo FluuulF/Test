@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Colorful" />
+  <title>Colorful</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      touch-action: none;
+    }
+    #app {
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      cursor: pointer;
+      transition: background-color 0.5s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    #hint {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.45;
+      transition: opacity 0.5s ease, color 0.5s ease;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <span id="hint">tap anywhere</span>
+  </div>
+  <script>
+    const app = document.getElementById('app');
+    const hint = document.getElementById('hint');
+    let hintVisible = true;
+
+    function randomColor() {
+      return {
+        h: Math.floor(Math.random() * 360),
+        s: 55 + Math.floor(Math.random() * 30),
+        l: 40 + Math.floor(Math.random() * 30)
+      };
+    }
+
+    function applyColor(c) {
+      app.style.backgroundColor = `hsl(${c.h},${c.s}%,${c.l}%)`;
+      const tl = c.l > 60
+        ? Math.max(c.l - 45, 15)
+        : Math.min(c.l + 45, 90);
+      hint.style.color = `hsl(${c.h},${c.s}%,${tl}%)`;
+    }
+
+    applyColor(randomColor());
+
+    app.addEventListener('pointerdown', () => {
+      if (hintVisible) {
+        hint.style.opacity = '0';
+        hintVisible = false;
+      }
+      applyColor(randomColor());
+    });
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
+</body>
+</html>
